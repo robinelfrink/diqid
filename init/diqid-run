@@ -1,0 +1,25 @@
+#!/sbin/openrc-run
+
+description="Run Docker in QEMU in Docker"
+
+depend() {
+    need sysfs modules localmount
+    after docker
+}
+
+start() {
+
+    ebegin "Running Docker in QEMU in Docker"
+    eindent
+
+    # Wait for docker to run
+    echo "Wait for docker to run "
+    while [ ! -S /var/run/docker.sock ]; do
+        sleep 1
+        echo -n "."
+    done
+    echo
+
+    eoutdent
+    eend $?
+}

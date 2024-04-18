@@ -1,0 +1,34 @@
+#!/sbin/openrc-run
+
+description="Setup Docker in QEMU in Docker"
+
+depend() {
+    need sysfs modules localmount networking
+    before docker
+}
+
+start() {
+
+    ebegin "Preparing Docker in QEMU in Docker"
+    eindent
+
+    # Run init scripts that openrc skipped
+    rc-service devfs start
+    rc-service cgroups start
+    rc-service localmount start
+    rc-service hwclock start
+    rc-service networking start
+
+    # Remove bogus /dev/loop directory; it confuses losetup
+    rm -rf /dev/loop
+
+    # Format and mount docker disk
+    mkfs.ext4 -F /dev/vda
+    mount -t ext4 /dev/vda /var/lib/docker
+
+    # Set a hostname
+    hostname diqid
+
+    eoutdent
+    eend $?
+}

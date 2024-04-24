@@ -1,7 +1,7 @@
 # Docker-in-QEMU-in-Docker
 
 Run docker containers in a virtual machine, using QEMU. This makes it possible
-possible to run privileged containers within unpivileged containers.
+to run privileged containers within unpivileged containers.
 
 ## Example
 

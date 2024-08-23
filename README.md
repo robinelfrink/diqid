@@ -54,6 +54,19 @@ $ docker run --interactive --tty --volume $(pwd):/scratch \
   / #
 ```
 
+### Timeouts
+
+Some timeouts can be adjusted if needed using environment variables:
+
+| name                 | default | description
+|----------------------|---------|------------
+| QEMU_TIMEOUT_START   | 60      | Time to wait for QEMU to start.
+| DOCKER_TIMEOUT_START | 300     | Time to wait for docker to be ready.
+| QEMU_TIMEOUT_STOP    | 30      | Time to wait for QEMU graceful shutdown.
+
+Values are interpreted as seconds.
+
+
 ## Console
 
 If needed, the QEMU console is available through a socket in the main

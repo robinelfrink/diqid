@@ -34,18 +34,30 @@ qemu-system-x86_64 -smp 1 -m ${MEMORY} -nodefaults \
 
 # Wait for QEMU
 echo -n "Waiting for QEMU..."
-while [ ! -f /tmp/qemu.pid ]; do
+TIMEOUT=${QEMU_TIMEOUT_START}
+while [ "${TIMEOUT}" -gt 0 -a ! -f /tmp/qemu.pid ]; do
+    TIMEOUT=$((${TIMEOUT}-1))
     echo -n "."
     sleep 1
 done
+if [ ${TIMEOUT} -le 0 ]; then
+    echo " [TIMEOUT]"
+    exit 1
+fi
 echo " [OK]"
 
 # Wait for docker
 echo -n "Waiting for dockerd..."
-while [ "$(wget --timeout 1 --quiet --output-document - http://127.0.0.1:2375/_ping 2>/dev/null)" != "OK" ]; do
+TIMEOUT=${DOCKER_TIMEOUT_START}
+while [ "${TIMEOUT}" -gt 0 -a "$(wget --timeout 1 --quiet --output-document - http://127.0.0.1:2375/_ping 2>/dev/null)" != "OK" ]; do
+    TIMEOUT=$((${TIMEOUT}-1))
     echo -n "."
     sleep 1
 done
+if [ ${TIMEOUT} -le 0 ]; then
+    echo " [TIMEOUT]"
+    exit 1
+fi
 echo " [OK]"
 
 # Run command
@@ -59,11 +71,17 @@ fi
 echo -n "Waiting for QEMU to shutdown..."
 echo '{ "execute": "guest-shutdown" }' | nc local:/tmp/qga.sock
 PID=$(cat /tmp/qemu.pid)
-while [ -d /proc/${PID} ]; do
+TIMEOUT=${QEMU_TIMEOUT_STOP}
+while [ "${TIMEOUT}" -gt 0 -a -d /proc/${PID} ]; do
+    TIMEOUT=$((${TIMEOUT}-1))
     echo -n "."
     sleep 1
 done
-echo " [OK]"
+if [ "${TIMEOUT}" -le 0 ]; then
+    echo " timeout, ignoring [OK]"
+else
+    echo " [OK]"
+fi
 
 # Remove docker volume image
 DOCKER_VOLUME_REMOVE=${DOCKER_VOLUME_REMOVE:-true}

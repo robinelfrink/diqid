@@ -10,7 +10,8 @@ fi
 mkdir -p /tmp
 
 # Start QEMU, using this container's root filesystem
-qemu-system-x86_64 -smp 1 -m ${MEMORY} -nodefaults \
+KVM=$([ -c /dev/kvm ] && echo "-enable-kvm" || echo "")
+qemu-system-x86_64 -smp 1 -m ${MEMORY} -nodefaults ${KVM} \
     -no-reboot -no-user-config -nographic -display none \
     -kernel /boot/vmlinuz-virt -initrd /boot/initramfs-virt \
     -append "root=rootfs ro rootfstype=9p rootflags=trans=virtio console=ttyS0 nomodeset" \

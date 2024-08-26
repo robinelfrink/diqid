@@ -42,6 +42,7 @@ $ docker run --interactive --tty --volume $(pwd):/scratch \
       --env DOCKER_VOLUME_SIZE=6G \
       --env DOCKER_VOLUME_FILE=/scratch/docker.qcow2 \
       --env DOCKER_VOLUME_REMOVE=false \
+      --device /dev/kvm \
       ghcr.io/robinelfrink/diqid \
       docker run --interactive --tty alpine
   Waiting for QEMU... [OK]

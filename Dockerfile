@@ -1,4 +1,4 @@
-FROM alpine:3.20
+FROM alpine:3.23
 
 # Install base system
 RUN apk add --no-cache alpine-base coreutils docker e2fsprogs linux-virt \
